@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KittyCat's Saycheese Project!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: coral;
+            position: relative;
+        }
+        .cat {
+            position: absolute;
+            height: 50px;
+            width: 50px;
+            /* transform: translate(-50%, -50%); */
+            
+            background-image: url(./cat.png);
+            background-size: 50px;
+            /* transition: 0.1s; */
+            /* z-index: 1; */
+        }
+        .mouse {
+            position: absolute;
+            height: 50px;
+            width: 50px;
+
+            background-image: url(./mouse.png);
+            background-size: 50px;
+            top: 100px;
+            left: 100px;
+            
+        }
+
+        html {
+            cursor: none;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Try and catch the mouse!!</h1>
+    <div id="cat" class="cat"></div>
+    <div id="mouse" class="mouse"></div>
+    <script>
+        const repelDistance = 100;
+        const moveSpeed = 3;
+
+
+        let cat = document.getElementById("cat");
+        let mouse = document.getElementById("mouse");
+
+
+
+
+        document.addEventListener('mousemove', function(e){
+            var x = e.clientX;
+            var y = e.clientY;
+            cat.style.left = x + "px";
+            cat.style.top = y +"px"
+
+            // if (cat.style.left == (50 + mouse.style.left)) {
+                
+            // }
+            // mouse.style.left = 50 + x + "px";
+            // mouse.style.top = 50 + y + "px";
+        });
+
+        // mouse.addEventListener("mouseover", function(e){
+        //     var x = e.clientX;
+        //     var y = e.clientY;
+        //     mouse.style.left = 50 + x + "px";
+        //     mouse.style.top = 50 + y +"px"
+
+        // });
+
+        // function updatePositions() {
+        //     const mouseRect = mouse.getBoundingClientRect();
+        //     const catRect = cat.getBoundingClientRect();
+
+        //     const deltaX = mouseRect.left - cat.left;
+        //     const deltaY = mouseRect.top - catRect.top;
+        //     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        //     if (distance < repelDistance) {
+        //         const angle = Math.atan2(deltaY, deltaX);
+        //         const moveX = Math.cos(angle) * 5;
+        //         const moveY = Math.sin(angle) * 5;
+
+        //         const currentX = parseFloat(mouse.style.left || 0);
+        //         const currentY = parseFloat(mouse.style.top || 0);
+
+        //         mouse.style.left = `${currentX + moveX}px`;
+        //         mouse.style.top = `${currentY + moveY}px`;
+        //     }
+        // }
+
+        let repellingPosition = {
+            x: parseFloat(window.getComputedStyle(mouse).left),
+            y: parseFloat(window.getComputedStyle(mouse).top)
+        };
+        function updatePositions() {
+            const mouseRect = mouse.getBoundingClientRect();
+            const catRect = cat.getBoundingClientRect();
+
+            const deltaX = mouseRect.left + mouseRect.width / 2 - (catRect.left + catRect.width / 2);
+            const deltaY = mouseRect.top + mouseRect.height / 2 - (catRect.top + catRect.height / 2);
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (distance < repelDistance) {
+                
+                const angle = Math.atan2(deltaY, deltaX);
+                const moveX = Math.cos(angle) * moveSpeed;
+                const moveY = Math.sin(angle) * moveSpeed;
+
+                repellingPosition.x += moveX;
+                repellingPosition.y += moveY;
+
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+
+                repellingPosition.x = Math.max(0, Math.min(repellingPosition.x, viewportWidth - mouseRect.width));
+                repellingPosition.y = Math.max(0, Math.min(repellingPosition.y, viewportHeight - mouseRect.height));
+        
+                mouse.style.left = `${repellingPosition.x}px`;
+                mouse.style.top = `${repellingPosition.y}px`;
+            }
+        }
+
+        setInterval(updatePositions, 10);
+    </script>
+
+</body>
+</html>
